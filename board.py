@@ -12,6 +12,11 @@ class ScrabbleBoard():
         self.recent_word = None
         self.start_coords = None
         self.end_coords = None
+        self.get_words()
+
+    def get_words(self):
+        with open("scrabble_words.txt") as f:
+            self.all_words = f.read().split("\n")
 
     def get_letter(self):
         # Take a random letter from the letters list and return it
@@ -430,13 +435,21 @@ class ScrabbleBoard():
             for neighbour in self.find_neighbours((letter_row, letter_col)):
                 if neighbour.isalpha():
                     print(f"Found neighbouring {neighbour}")
-                    print(self.gain_word_from_letter((letter_row, letter_col)))
+                    neighbouring_words = self.gain_word_from_letter(
+                        (letter_row, letter_col))
+                    print(neighbouring_words)
+                    print(self.validation_check(neighbouring_words))
         self.end_coords = (letter_row, letter_col)
         scrabble_board.display_board()
 
-    def intersection_detection():
-        # Check for any horizontal meetings or vertical
-        pass
+    def validation_check(self, word_list: list):
+        # Check all words formed are valid words
+        print(f"checking words {word_list}")
+        for word in word_list:
+            print(f"checking {word}")
+            if word not in self.all_words:
+                return False, word
+        return True
 
 
 scrabble_board = ScrabbleBoard(None)
@@ -444,5 +457,5 @@ scrabble_board.display_board()
 # inserting alpha at the start and beta at some point.
 scrabble_board.insert_word(34, True, "alpha")
 scrabble_board.insert_word(50, False, "poopoo")
-scrabble_board.insert_word(51, False, "lalala")
+# scrabble_board.insert_word(51, False, "lalala")
 print(scrabble_board.letter_in_pos(scrabble_board.conv_idx_to_coords(66)))
