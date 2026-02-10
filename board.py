@@ -1,4 +1,5 @@
 import random
+import copy
 
 
 class ScrabbleBoard():
@@ -6,7 +7,7 @@ class ScrabbleBoard():
         # Scrabble boards are 15x15 generally,
         # reoresented by nested list
         self.board = [[str(i+j*15) for i in range(15)] for j in range(15)]
-        self.hypo_board = self.board.copy()
+        self.hypo_board = self.board
         self.n_moves = 0
         self.letters = letters
         self.middle = "112"  # Should start from the middle.
@@ -415,7 +416,7 @@ class ScrabbleBoard():
         word = word.upper()
         corresp_row, corresp_column = self.conv_idx_to_coords(start)
         start_coords = (corresp_row, corresp_column)
-        hypothetical_board = self.board.copy()
+        self.hypo_board = copy.deepcopy(self.board)
         if hor:
             end_coords = (corresp_row, corresp_column + len(word))
         else:
@@ -424,9 +425,9 @@ class ScrabbleBoard():
             return False, "The word will go out of the board!"
         for i, char in enumerate(word):
             if hor:
-                hypothetical_board[corresp_row][corresp_column + i] = char
+                self.hypo_board[corresp_row][corresp_column + i] = char
             else:
-                hypothetical_board[corresp_row + i][corresp_column] = char
+                self.hypo_board[corresp_row + i][corresp_column] = char
         for i in range(len(word)):
             if hor:
                 letter_row = corresp_row
@@ -450,15 +451,15 @@ class ScrabbleBoard():
     def insert_word(self, start: int, hor: bool, word: str):
         word = word.upper()
         corresp_row, corresp_column = self.conv_idx_to_coords(start)
-        hypothetical_board = self.board.copy()
         for i, char in enumerate(word):
             if hor:
-                hypothetical_board[corresp_row][corresp_column + i] = char
+                self.board[corresp_row][corresp_column + i] = char
             else:
-                hypothetical_board[corresp_row + i][corresp_column] = char
+                self.board[corresp_row + i][corresp_column] = char
 
     def input_word(self, start: int, hor: bool, word: str):
         outcome = self.try_word(start, hor, word)
+        self.display_board()
         print(outcome[0])
         if outcome[0]:
             self.insert_word(start, hor, word)
