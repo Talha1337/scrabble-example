@@ -5,10 +5,14 @@ class Letter():
     def __init__(self):
         pass
 
+# with open("game_info.json", "r") as f:
+#     game_info = json.load(f)
+# self.score_dict = game_info["points"]
+
 
 class Letters():
     def __init__(self, tile_collection: dict = None, max_letters_on_hand: int = 7):
-        self.letters_on_hand = []
+        self.max_letters_on_hand = max_letters_on_hand
         if tile_collection:
             self.tiles = tile_collection
         # Otherwise, use default tile numbers
@@ -21,9 +25,11 @@ class Letters():
         }
         self.pickup_tiles = [tile*self.tiles[tile] for tile in self.tiles]
 
-    def pick_up_letters(self):
-        while len(self.letters_on_hand) < 7 and self.pickup_tiles:
+    def pick_up_letters(self, current_letters: list):
+        while len(current_letters) < self.max_letters_on_hand and self.pickup_tiles:
             random.shuffle(self.pickup_tiles)
-            self.letters_on_hand.append(self.pickup_tiles.pop())
+            current_letters.append(self.pickup_tiles.pop())
+        return current_letters
 
-    def
+    def show_current_letters(self, letters: list):
+        print(letters)

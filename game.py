@@ -6,13 +6,13 @@ import random
 
 
 class Scrabble():
-    def __init__(self, board: ScrabbleBoard, checker: InputChecker):
+    def __init__(self, board: ScrabbleBoard, checker: InputChecker, letters: Letters):
         print("PLAYING SCRABBLE")
-        with open("game_info.json", "r") as f:
-            game_info = json.load(f)
+
         self.board = board
         self.checker = checker
-        self.score_dict = game_info["points"]
+        self.letters = letters
+
         self.curr_player = None
         self.players = []
         self.n_players = len(self.players)  # 0
