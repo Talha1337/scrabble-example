@@ -1,9 +1,29 @@
 from board import ScrabbleBoard
+import json
 
 
 class Scrabble():
     def __init__(self, board: ScrabbleBoard):
-        pass
+        print("PLAYING SCRABBLE")
+        with open("game_info.json", "r") as f:
+            game_info = json.load(f)
+        self.score_dict = game_info["points"]
+        self.curr_player = None
+        self.players = []
+        self.n_players = len(self.players)  # 0
+
+    def start_names(self):
+        while not self.validate_n_players(n_players):
+            n_players = input("How many players do you want to play [2-4]? ")
+
+    def validate_n_players(self):
+        try:
+            n_players = int(n_players)
+        except:
+            return False
+        if n_players < 2 or n_players > 4:
+            return False
+        return True
 
     def validate_input_slot(self):
         try:
@@ -25,8 +45,8 @@ class Scrabble():
             # shouldn't contain any digits.
             return True
 
-    def take_input(self, player):
-        print(f"{player}'s turn.")
+    def take_input(self):
+        print(f"{self.player1}'s turn.")
         slot_valid, hor_valid, word_valid = None, None, None
 
         while not slot_valid:
@@ -39,6 +59,12 @@ class Scrabble():
         while not word_valid:
             self.word_input = input("Please enter your word: ")
             word_valid = self.validate_word_input()
+
+    def word_score(self, player):
+        total_score = 0
+        for char in self.word_input:
+            total_score += self.score_dict[char]
+        return total_score
 
 
 if __name__ == "__main__":
