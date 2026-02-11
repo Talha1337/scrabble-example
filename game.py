@@ -44,7 +44,7 @@ class Scrabble():
                 "Please specify if the word is vertical (v) or horizontal (h): ")
             self.checker.user_in = self.hor_vert
             hor_valid = self.checker.validate_hor()
-        self.hor_input = True if self.hor_vert == "v" else False
+        self.hor_input = False if self.hor_vert == "v" else True
         while not word_valid:
             self.word_input = input("Please enter your word: ")
             self.checker.user_in = self.word_input
