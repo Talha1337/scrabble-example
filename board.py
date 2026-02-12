@@ -10,6 +10,7 @@ class ScrabbleBoard():
         self.hypo_board = self.board
         self.n_moves = 0
         self.middle = "112"  # Should start from the middle.
+        self.mid_point = self.conv_idx_to_coords(int(self.middle))
         self.get_words()
 
     def get_words(self):
@@ -410,6 +411,9 @@ class ScrabbleBoard():
     def try_word(self, start: int, hor: bool, word: str) -> bool:
         word = word.upper()
         self.req_letters = []
+        found_some_neighbours = False
+        passes_through_middle = False
+
         # Say for example "NOTEBOOK"
         corresp_row, corresp_column = self.conv_idx_to_coords(start)
         start_coords = (corresp_row, corresp_column)
@@ -423,23 +427,20 @@ class ScrabbleBoard():
         for i, char in enumerate(word):
             #  We need to check for overlaps
             if hor:
-                if self.hypo_board[corresp_row][corresp_column + i] != char and self.hypo_board[corresp_row][corresp_column + i].isalpha():
-                    return False, "Overlapping an original letter"
-                if self.hypo_board[corresp_row][corresp_column + i] != char:
-                    self.req_letters.append(char)
-                    print(
-                        f"We require {char} in place of {self.hypo_board[corresp_row][corresp_column + i]}")
-                # Now we know that this has to come from our hand.
-                self.hypo_board[corresp_row][corresp_column + i] = char
+                board_idx = (corresp_row, corresp_column + i)
             else:
-                if self.hypo_board[corresp_row + i][corresp_column] != char and self.hypo_board[corresp_row + i][corresp_column].isalpha():
-                    return False, "Overlapping an original letter"
-                if self.hypo_board[corresp_row + i][corresp_column] != char:
-                    self.req_letters.append(char)
-                    print(
-                        f"We require {char} in place of {self.hypo_board[corresp_row + i][corresp_column]}")
-                # Now we know that this has to come from our hand.
-                self.hypo_board[corresp_row + i][corresp_column] = char
+                board_idx = (corresp_row + i, corresp_column)
+            if board_idx == self.mid_point:
+                passes_through_middle = True
+            selected_board_piece = self.hypo_board[board_idx[0]][board_idx[1]]
+            if selected_board_piece != char and selected_board_piece.isalpha():
+                return False, "Overlapping an original letter"
+            if selected_board_piece != char:
+                self.req_letters.append(char)
+                print(
+                    f"We require {char} in place of {selected_board_piece}")
+            # Now we know that this has to come from our hand.
+            self.hypo_board[board_idx[0]][board_idx[1]] = char
         for i in range(len(word)):
             if hor:
                 letter_row = corresp_row
@@ -453,11 +454,14 @@ class ScrabbleBoard():
                     neighbouring_words = self.gain_word_from_letter(
                         (letter_row, letter_col))
                     print(neighbouring_words)
+                    found_some_neighbours = True
                     validation_check = self.validation_check(
                         neighbouring_words)
                     if not validation_check[0]:
                         # This move would be illegal
                         return False, f"Invalid word found ({validation_check[1]})"
+        if not found_some_neighbours and not passes_through_middle:
+            return False, "Word is unconnected"
         return True, "Word is playable."
 
     def insert_word(self, start: int, hor: bool, word: str):
