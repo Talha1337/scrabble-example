@@ -14,7 +14,7 @@ class ScrabbleBoard():
         self.middle = "112"  # Should start from the middle.
         self.mid_point = self.conv_idx_to_coords(int(self.middle))
         self.get_words()
-        self.unique_words_found = set()
+        self.unique_words_found = []
         self.word_score = 0
 
     def get_words(self):
@@ -475,15 +475,18 @@ class ScrabbleBoard():
         if not found_some_neighbours and not passes_through_middle:
             return False, "Word is unconnected"
 
+        current_word = Word(word=word, start_pos=start, orientation=hor)
+        self.word_score = current_word.get_score_unique()
+        self.unique_words_found.append(current_word)
+
         self.check_words_for_uniqueness(all_additional_words)
-        self.word_score = 0
         for added_word in all_additional_words:
             # That means this is fresh.
             word_score = added_word.get_score_unique()
             print(f"{word_score} points for {added_word.word}")
             self.word_score += added_word.get_score_unique()
             if added_word.new:
-                self.unique_words_found.add(added_word)
+                self.unique_words_found.append(added_word)
 
         return True, "Word is playable.", self.word_score
 
@@ -505,7 +508,7 @@ class ScrabbleBoard():
         return Word(word, start_pos, orientation)
 
     def add_to_unique_words(self, word: Word):
-        self.unique_words_found.add(word)
+        self.unique_words_found.append(word)
 
     def check_words_for_uniqueness(self, checking_words: list[Word]):
         for checking_word in checking_words:
