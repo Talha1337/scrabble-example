@@ -21,8 +21,11 @@ class ScrabbleBoard():
         with open("scrabble_words.txt") as f:
             self.all_words = f.read().split("\n")
 
-    def conv_idx_to_coords(self, idx):
+    def conv_idx_to_coords(self, idx: int) -> tuple:
         return (idx // 15, idx % 15)
+
+    def conv_coords_to_idx(self, coords: tuple) -> int:
+        return coords[0]*15 + coords[1]
 
     def letter_in_pos(self, coords):
         return self.hypo_board[coords[0]][coords[1]]
@@ -393,7 +396,8 @@ class ScrabbleBoard():
             while self.left(coords).isalpha():
                 coords[1] = coords[1] - 1
             print(self.letter_in_pos(coords))
-            word_coords.append(coords)
+            word_coords.append(coords.copy())
+            print(f"Start coords at {self.conv_coords_to_idx(coords)}")
             words[0] += self.letter_in_pos(coords)
             while self.right(coords).isalpha():
                 words[0] += self.right(coords)
@@ -408,12 +412,14 @@ class ScrabbleBoard():
             while self.up(coords).isalpha():
                 print(self.up(coords))
                 coords[0] = coords[0] - 1
-            word_coords.append(coords)
+            word_coords.append(coords.copy())
             words[1] += self.letter_in_pos(coords)
+            print(f"Start coords at {self.conv_coords_to_idx(coords)}")
             while self.down(coords).isalpha():
                 words[1] += self.down(coords)
                 coords[0] = coords[0] + 1
-        return [words, word_coords, ["h", "v"]]
+        print(f"Final word coords: {word_coords}")
+        return [words, word_coords, [True, False]]
 
     def try_word(self, start: int, hor: bool, word: str) -> bool:
         self.hor = hor
@@ -482,12 +488,14 @@ class ScrabbleBoard():
         self.check_words_for_uniqueness(all_additional_words)
         for added_word in all_additional_words:
             # That means this is fresh.
-            word_score = added_word.get_score_unique()
-            print(f"{word_score} points for {added_word.word}")
-            self.word_score += added_word.get_score_unique()
             if added_word.new:
                 self.unique_words_found.append(added_word)
+                word_score = added_word.get_score_unique()
+                print(f"{word_score} points for {added_word.word}")
+                self.word_score += added_word.get_score_unique()
 
+        for unique_word in self.unique_words_found:
+            print(unique_word)
         return True, "Word is playable.", self.word_score
 
     def turn_to_words(self, collection_of_words: list[list]) -> list[Word]:
@@ -501,7 +509,7 @@ class ScrabbleBoard():
         words_list = []
         for i in range(len(collection_of_words[0])):
             words_list.append(Word(
-                collection_of_words[0][i], collection_of_words[1][i], collection_of_words[2][i]))
+                collection_of_words[0][i], self.conv_coords_to_idx(collection_of_words[1][i]), collection_of_words[2][i]))
         return words_list
 
     def turn_to_word(self, word, start_pos, orientation) -> Word:

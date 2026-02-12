@@ -36,6 +36,9 @@ class Word():
             "Z": 10
         }
 
+    def __str__(self):
+        return f"word: {self.word}, start: {self.start_pos}, orientation: {self.orientation}"
+
     def get_score(self) -> int:
         # TODO: Try and incorporate 2x letter, 3x word tiles etc
         #  By combining placed points.

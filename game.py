@@ -69,7 +69,6 @@ class Scrabble():
             self.curr_player.letters.remove(letter.upper())
 
     def take_turn(self):
-        invalid_letters = False
         print(f"{self.curr_player.name}'s turn")
         print(self.curr_player)
         move = self.take_input()
