@@ -43,7 +43,8 @@ class Letters():
 
     def replace_all_letters(self, current_letters: list):
         # Give all letters back to pile, and grab some new ones
-        for i in range(len(current_letters)):
+        number_of_letters = len(current_letters)
+        for i in range(number_of_letters):
             # take each letter out of current letters and put in pickup tiles
             self.pickup_tiles.append(current_letters.pop())
         return self.pick_up_letters(current_letters=current_letters)

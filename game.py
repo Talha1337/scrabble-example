@@ -63,6 +63,10 @@ class Scrabble():
         self.curr_player.letters = self.letters.pick_up_letters(
             current_player_letters)
 
+    def place_letters(self):
+        for letter in self.word_input:
+            self.curr_player.letters.remove(letter.upper())
+
     def play(self):
         print("starting game")
         self.start_names()
@@ -79,14 +83,17 @@ class Scrabble():
                 if move == "swap":
                     # Swap letters
                     self.letters.replace_all_letters(self.curr_player.letters)
+                    break
                 for letter in self.word_input:
-                    if letter not in self.curr_player.letters:
+                    if letter.upper() not in self.curr_player.letters:
                         print("Invalid letters given")
                         invalid_letters = True
                         break
                 if invalid_letters:
                     continue
                 if self.board.input_word(self.slot, self.hor_input, self.word_input):
+                    # This is a valid input, so we can leave this playerinput block
+                    self.place_letters()
                     break
             i += 1
 
