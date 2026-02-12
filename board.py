@@ -460,7 +460,8 @@ class ScrabbleBoard():
             self.insert_word(start, hor, word)
         else:
             print(outcome[1])
-        self.display_board()
+            return False
+        return True
 
     def validation_check(self, word_list: list):
         # Check all words formed are valid words

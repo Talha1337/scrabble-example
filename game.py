@@ -65,11 +65,22 @@ class Scrabble():
         i = 0
         while i < 15:
             self.curr_player = self.players[i % self.n_players]
-            print(f"{self.curr_player.name}'s turn")
-            print(self.curr_player)
             self.take_letters()
-            self.take_input()
-            self.board.input_word(self.slot, self.hor_input, self.word_input)
+            self.board.display_board()
+            while self.curr_player.letters:
+                try_again = False
+                print(f"{self.curr_player.name}'s turn")
+                print(self.curr_player)
+                self.take_input()
+                for letter in self.word_input:
+                    if letter not in self.curr_player.letters:
+                        print("Invalid letters given")
+                        try_again = True
+                        break
+                if try_again:
+                    continue
+                if self.board.input_word(self.slot, self.hor_input, self.word_input):
+                    break
             i += 1
 
     def get_letter(self):
