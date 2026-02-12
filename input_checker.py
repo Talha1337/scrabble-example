@@ -6,6 +6,9 @@ class InputChecker():
         pass
 
     def validate_input_slot(self):
+        if self.user_in == "swap":
+            # Then see the swapping feature
+            return True
         try:
             # number should be able to turn into int
             slot_int = int(self.user_in)
