@@ -81,11 +81,11 @@ class Scrabble():
         if self.board.input_word(self.slot, self.hor_input, self.word_input):
             # This is a valid input, so we can leave this playerinput block
             player_letters = copy.deepcopy(self.curr_player.letters)
-            for letter in player_letters:
+            for letter in self.board.req_letters:
                 print(letter)
-                if letter.upper() not in self.curr_player.letters:
+                if letter.upper() not in player_letters:
                     print(
-                        f"Invalid letters given, {self.board.req_letters} required.")
+                        f"You don't have those letters.")
 
                     return False
                 player_letters.remove(letter)

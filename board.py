@@ -474,7 +474,7 @@ class ScrabbleBoard():
 
         if not found_some_neighbours and not passes_through_middle:
             return False, "Word is unconnected"
-
+        #  Point system needs fixing
         current_word = Word(word=word, start_pos=start, orientation=hor)
         self.word_score = current_word.get_score_unique()
         self.unique_words_found.append(current_word)
