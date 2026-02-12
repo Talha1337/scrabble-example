@@ -4,6 +4,7 @@ from letters import Letters
 from player import Player
 import json
 import random
+import copy
 
 
 class Scrabble():
@@ -30,7 +31,6 @@ class Scrabble():
             if player_name.strip() == "":
                 player_name = f"Player {i+1}"
             self.players.append(Player(name=player_name))
-        print(self.players)
 
     def take_input(self):
         slot_valid, hor_valid, word_valid = None, None, None
@@ -53,9 +53,11 @@ class Scrabble():
 
     def take_letters(self):
         # It will pick up letters based on the current player's letters
+        current_player_letters = self.curr_player.letters.copy()
+        # Copy is necessary as otherwise will overwrite letters
+        # for all players
         self.curr_player.letters = self.letters.pick_up_letters(
-            self.curr_player.letters)
-        print(self.curr_player)
+            current_player_letters)
 
     def play(self):
         print("starting game")
@@ -64,6 +66,7 @@ class Scrabble():
         while i < 15:
             self.curr_player = self.players[i % self.n_players]
             print(f"{self.curr_player.name}'s turn")
+            print(self.curr_player)
             self.take_letters()
             self.take_input()
             self.board.input_word(self.slot, self.hor_input, self.word_input)
