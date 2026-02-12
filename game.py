@@ -109,6 +109,17 @@ class Scrabble():
                     f"{self.curr_player.name} is now on {self.curr_player.score} points")
             i += 1
 
+    def play_auto(self, moves: list):
+        print("starting game")
+        self.n_players = 2
+        self.players = [Player("Player 1"), Player("Player 2")]
+        i = 0
+        while i < len(moves):
+            # Probably put a bunch of
+            # moves in here then can
+            # check
+            pass
+
     def get_letter(self):
         # Take a random letter from the letters list and return it
         random.shuffle(self.letters)

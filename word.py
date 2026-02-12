@@ -47,3 +47,4 @@ class Word():
     def get_score_unique(self) -> int:
         if self.new:
             return self.get_score()
+        return 0
