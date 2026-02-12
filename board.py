@@ -1,5 +1,6 @@
 import random
 import copy
+from word import Word
 
 
 class ScrabbleBoard():
@@ -12,6 +13,7 @@ class ScrabbleBoard():
         self.middle = "112"  # Should start from the middle.
         self.mid_point = self.conv_idx_to_coords(int(self.middle))
         self.get_words()
+        self.unique_words_found = set()
 
     def get_words(self):
         with open("scrabble_words.txt") as f:
@@ -383,18 +385,20 @@ class ScrabbleBoard():
         words = ["", ""]
         coords_orig = list(coords).copy()
         coords = list(coords)
+        word_coords = []
         if self.left(coords).isalpha() or self.right(coords).isalpha():
-            # Word is horizontal
             print("Found horiz")
             while self.left(coords).isalpha():
                 coords[1] = coords[1] - 1
             print(self.letter_in_pos(coords))
+            word_coords.append(coords)
             words[0] += self.letter_in_pos(coords)
             while self.right(coords).isalpha():
                 words[0] += self.right(coords)
                 coords[1] = coords[1] + 1
                 print(self.right(coords))
             pass
+
         coords = coords_orig
         if self.up(coords).isalpha() or self.down(coords).isalpha():
             # Word is vertical
@@ -402,13 +406,15 @@ class ScrabbleBoard():
             while self.up(coords).isalpha():
                 print(self.up(coords))
                 coords[0] = coords[0] - 1
+            word_coords.append(coords)
             words[1] += self.letter_in_pos(coords)
             while self.down(coords).isalpha():
                 words[1] += self.down(coords)
                 coords[0] = coords[0] + 1
-        return words
+        return [words, word_coords, ["h", "v"]]
 
     def try_word(self, start: int, hor: bool, word: str) -> bool:
+        self.hor = hor
         word = word.upper()
         self.req_letters = []
         found_some_neighbours = False
@@ -450,19 +456,43 @@ class ScrabbleBoard():
                 letter_col = corresp_column
             for neighbour in self.find_neighbours((letter_row, letter_col), start_coords, hor, end_coords):
                 if neighbour.isalpha():
-                    print(f"Found neighbouring {neighbour}")
-                    neighbouring_words = self.gain_word_from_letter(
+                    neighbouring_words_all_info = self.gain_word_from_letter(
                         (letter_row, letter_col))
-                    print(neighbouring_words)
                     found_some_neighbours = True
                     validation_check = self.validation_check(
-                        neighbouring_words)
+                        neighbouring_words_all_info[0])
                     if not validation_check[0]:
                         # This move would be illegal
                         return False, f"Invalid word found ({validation_check[1]})"
         if not found_some_neighbours and not passes_through_middle:
             return False, "Word is unconnected"
         return True, "Word is playable."
+
+    def turn_to_words(self, collection_of_words: list[list]) -> list[Word]:
+        """
+
+
+        :param self: the scrabble board
+        :param collection_of_words: a list of lists which look like [[words] [positions] [orientations]]
+        :type collection_of_words: list[list]
+        """
+        words_list = []
+        for i in range(len(collection_of_words[0])):
+            words_list.append(Word(
+                collection_of_words[0][i], collection_of_words[1][i], collection_of_words[2][i]))
+        return words_list
+
+    def turn_to_word(self, word, start_pos, orientation) -> Word:
+        return Word(word, start_pos, orientation)
+
+    def add_to_unique_words(self, word: Word):
+        self.unique_words_found.add(word)
+
+    def check_word_for_uniqueness(self, checking_word: Word):
+        for word in self.unique_words_found:
+            if word.word == checking_word.word and word.start_pos == checking_word.start_pos and word.orientation == checking_word.orientation:
+                return False
+        return True
 
     def insert_word(self, start: int, hor: bool, word: str):
         word = word.upper()
