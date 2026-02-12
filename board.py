@@ -427,14 +427,18 @@ class ScrabbleBoard():
                     return False, "Overlapping an original letter"
                 if self.hypo_board[corresp_row][corresp_column + i] != char:
                     self.req_letters.append(char)
-                    # Now we know that this has to come from our hand.
+                    print(
+                        f"We require {char} in place of {self.hypo_board[corresp_row][corresp_column + i]}")
+                # Now we know that this has to come from our hand.
                 self.hypo_board[corresp_row][corresp_column + i] = char
             else:
                 if self.hypo_board[corresp_row + i][corresp_column] != char and self.hypo_board[corresp_row + i][corresp_column].isalpha():
                     return False, "Overlapping an original letter"
-                if self.hypo_board[corresp_row][corresp_column + i] != char:
+                if self.hypo_board[corresp_row + i][corresp_column] != char:
                     self.req_letters.append(char)
-                    # Now we know that this has to come from our hand.
+                    print(
+                        f"We require {char} in place of {self.hypo_board[corresp_row + i][corresp_column]}")
+                # Now we know that this has to come from our hand.
                 self.hypo_board[corresp_row + i][corresp_column] = char
         for i in range(len(word)):
             if hor:
@@ -464,6 +468,7 @@ class ScrabbleBoard():
                 self.board[corresp_row][corresp_column + i] = char
             else:
                 self.board[corresp_row + i][corresp_column] = char
+        print("inserted word!")
 
     def input_word(self, start: int, hor: bool, word: str):
         outcome = self.try_word(start, hor, word)

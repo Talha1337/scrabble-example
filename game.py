@@ -64,8 +64,34 @@ class Scrabble():
             current_player_letters)
 
     def place_letters(self):
-        for letter in self.word_input:
+        for letter in self.board.req_letters:
+            print(letter)
             self.curr_player.letters.remove(letter.upper())
+
+    def take_turn(self):
+        invalid_letters = False
+        print(f"{self.curr_player.name}'s turn")
+        print(self.curr_player)
+        move = self.take_input()
+        if move == "swap":
+            # Swap letters
+            self.letters.replace_all_letters(
+                self.curr_player.letters)
+            return True
+        if self.board.input_word(self.slot, self.hor_input, self.word_input):
+            # This is a valid input, so we can leave this playerinput block
+            player_letters = copy.deepcopy(self.curr_player.letters)
+            for letter in player_letters:
+                print(letter)
+                if letter.upper() not in self.curr_player.letters:
+                    print(
+                        f"Invalid letters given, {self.board.req_letters} required.")
+
+                    return False
+                player_letters.remove(letter)
+
+            self.place_letters()
+            return True
 
     def play(self):
         print("starting game")
@@ -75,26 +101,9 @@ class Scrabble():
             self.curr_player = self.players[i % self.n_players]
             self.take_letters()
             self.board.display_board()
-            while self.curr_player.letters:
-                invalid_letters = False
-                print(f"{self.curr_player.name}'s turn")
-                print(self.curr_player)
-                move = self.take_input()
-                if move == "swap":
-                    # Swap letters
-                    self.letters.replace_all_letters(self.curr_player.letters)
-                    break
-                for letter in self.word_input:
-                    if letter.upper() not in self.curr_player.letters:
-                        print("Invalid letters given")
-                        invalid_letters = True
-                        break
-                if invalid_letters:
-                    continue
-                if self.board.input_word(self.slot, self.hor_input, self.word_input):
-                    # This is a valid input, so we can leave this playerinput block
-                    self.place_letters()
-                    break
+            if self.curr_player.letters:
+                while not self.take_turn():
+                    pass
             i += 1
 
     def get_letter(self):
