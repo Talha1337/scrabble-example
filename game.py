@@ -29,12 +29,13 @@ class Scrabble():
             self.find_unique_filename()
 
     def find_unique_filename(self):
-        possible_fname = "game.csv"
+        possible_fname = "games/game.csv"
         i = 0
         while os.path.isfile(possible_fname):
             i += 1
-            possible_fname = f"game ({i}).csv "
+            possible_fname = f"games/game{i}.csv"
         self.save_path = possible_fname
+        self.header = True
 
     def start_names(self):
         while not self.checker.validate_n_players():
@@ -128,9 +129,10 @@ class Scrabble():
                         "hor": [self.board.most_recent_move.orientation],
                         "starting_position": [self.board.most_recent_move.pos]
                     }
-                    with open(self.save_path, "w") as f:
-                        pd.DataFrame(move_info).to_csv(
-                            f, mode="-a", header=not os.path.exists(self.save_path))
+                    mode = "w" if self.header else "a"
+                    pd.DataFrame.from_dict(move_info).to_csv(
+                        self.save_path, mode=mode, header=self.header, index=False)
+                    self.header = False
             i += 1
         # Game has ended at this point
 
