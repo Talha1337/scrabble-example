@@ -2,6 +2,7 @@ from board import ScrabbleBoard
 from input_checker import InputChecker
 from letters import Letters
 from player import Player
+from test_game import Move
 import json
 import random
 import copy
@@ -26,15 +27,16 @@ class Scrabble():
         #  player score and whatever letters they might have.
         self.save_path = None
         if log:
-            self.find_unique_filename()
+            self.find_unique_dir()
 
-    def find_unique_filename(self):
-        possible_fname = "logged_games/game.csv"
-        i = 0
-        while os.path.isfile(possible_fname):
-            i += 1
-            possible_fname = f"logged_games/game{i}.csv"
-        self.save_path = possible_fname
+    def find_unique_dir(self):
+        possible_dirname = "logged_games/game/"
+        self.i = 0
+        while os.path.isdir(possible_dirname):
+            self.i += 1
+            possible_dirname = f"logged_games/game{self.i}/"
+        os.mkdir(possible_dirname)
+        self.save_path = possible_dirname
         self.header = True
 
     def start_names(self):
@@ -113,6 +115,10 @@ class Scrabble():
             self.place_letters()
             return True
 
+    def save_board_json(self):
+        with open(self.save_path + "final_board.json", "w") as f:
+            json.dump(self.board.board, f)
+
     def play(self):
         print("starting game")
         self.start_names()
@@ -135,12 +141,12 @@ class Scrabble():
                     }
                     mode = "w" if self.header else "a"
                     pd.DataFrame.from_dict(move_info).to_csv(
-                        self.save_path, mode=mode, header=self.header, index=False)
+                        self.save_path + "moves.csv", mode=mode, header=self.header, index=False)
                     self.header = False
             i += 1
         # Game has ended at this point
 
-    def play_auto(self, moves: list):
+    def play_auto(self, moves: list[Move]):
         print("starting game")
         self.n_players = 2
         self.players = [Player("Player 1"), Player("Player 2")]
@@ -149,7 +155,12 @@ class Scrabble():
             # Probably put a bunch of
             # moves in here then can
             # check
-            pass
+            if self.board.input_word(
+                    moves[i].pos, moves[i].orientation, moves[i].word):
+                self.board.insert_word(
+                    moves[i].pos, moves[i].orientation, moves[i].word)
+            self.board.display_board()
+            i += 1
 
     def get_letter(self):
         # Take a random letter from the letters list and return it

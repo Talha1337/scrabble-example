@@ -33,16 +33,46 @@ class ScrabbleBoard():
         return self.hypo_board[coords[0]][coords[1]]
 
     def down(self, coords):
+        if self.down_edge(coords):
+            return "999"
         return self.hypo_board[coords[0]+1][coords[1]]
 
     def up(self, coords):
+        if self.up_edge(coords):
+            return "999"
         return self.hypo_board[coords[0]-1][coords[1]]
 
     def left(self, coords):
+        if self.left_edge(coords):
+            return "999"
         return self.hypo_board[coords[0]][coords[1]-1]
 
     def right(self, coords):
+        if self.right_edge(coords):
+            return "999"
         return self.hypo_board[coords[0]][coords[1]+1]
+
+    #  Edges checked so that no
+    # accidental going outside list range.
+    def right_edge(self, coords):
+        if coords[1] == 14:
+            return True
+        return False
+
+    def left_edge(self, coords):
+        if coords[1] == 0:
+            return True
+        return False
+
+    def up_edge(self, coords):
+        if coords[0] == 0:
+            return True
+        return False
+
+    def down_edge(self, coords):
+        if coords[0] == 14:
+            return True
+        return False
 
     # def neighbouring_valid_coords(self, coords) -> list:
     #     coord_values = []
@@ -436,11 +466,11 @@ class ScrabbleBoard():
         start_coords = (corresp_row, corresp_column)
         self.hypo_board = copy.deepcopy(self.board)
         if hor:
-            end_coords = (corresp_row, corresp_column + len(word))
+            end_coords = (corresp_row, corresp_column + len(word)-1)
         else:
-            end_coords = (corresp_row + len(word), corresp_column)
+            end_coords = (corresp_row + len(word)-1, corresp_column)
         if max(end_coords) > 14:
-            return False, "The word will go out of the board!"
+            return False, f"The word will go out of the board! {end_coords}"
         for i, char in enumerate(word):
             #  We need to check for overlaps
             if hor:
@@ -545,7 +575,6 @@ class ScrabbleBoard():
 
     def input_word(self, start: int, hor: bool, word: str):
         outcome = self.try_word(start, hor, word)
-        self.display_board()
         print(outcome[0], outcome[1])
         if outcome[0]:
             # self.insert_word(start, hor, word)

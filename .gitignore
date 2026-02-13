@@ -1,2 +1,3 @@
 *.txt
 logged_games/*
+__pycache__/
