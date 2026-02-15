@@ -1,3 +1,4 @@
-*.txt
+scrabble_words.txt
 logged_games/*
 __pycache__/
+*.py[cod]
