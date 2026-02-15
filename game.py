@@ -46,7 +46,8 @@ class Scrabble():
             self.checker.user_in = self.n_players
         self.n_players = int(self.n_players)
         for i in range(self.n_players):
-            player_name = input(f"Please insert player {i} name: ")
+            player_name = input(
+                f"Please insert player {i+1} name (skip for 'Player {i+1}'): ")
             if player_name.strip() == "":
                 player_name = f"Player {i+1}"
             self.players.append(Player(name=player_name))
