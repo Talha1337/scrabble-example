@@ -1,7 +1,6 @@
 class InputChecker:
     def __init__(self, initial_in: str = None):
         self.user_in = initial_in
-        pass
 
     def validate_input_slot(self):
         if self.user_in == "swap":
@@ -10,7 +9,7 @@ class InputChecker:
         try:
             # number should be able to turn into int
             slot_int = int(self.user_in)
-        except:
+        except (ValueError, TypeError):
             return False
         if slot_int > 224 or slot_int < 0:
             # number should be in board range
@@ -29,7 +28,7 @@ class InputChecker:
     def validate_n_players(self):
         try:
             self.n_players = int(self.user_in)
-        except:
+        except (ValueError, TypeError):
             return False
         if self.n_players < 2 or self.n_players > 4:
             return False

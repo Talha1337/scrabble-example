@@ -18,7 +18,6 @@ class Response:
         colour=bcolors.OKBLUE,
         status: bool = True,
     ):
-        print("PEWWWW")
         self.colour = colour  #  By default
         self.message = message
         self.prefix = prefix

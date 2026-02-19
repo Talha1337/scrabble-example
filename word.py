@@ -1,5 +1,3 @@
-
-
 class Word:
     def __init__(self, word, start_pos, orientation):
         self.word = word

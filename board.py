@@ -1,13 +1,16 @@
 import copy
 from word import Word
 from test_game import Move
-from responses import *
+from responses import Mistake
 
 
 class ScrabbleBoard:
     def __init__(self):
-        # Scrabble boards are 15x15 generally,
-        # reoresented by nested list
+        """
+        The place where tiles are placed in the Scrabble game
+        Currently hardcoded to 15x15
+        Checks for logic of tile placements and displaying them
+        """
         self.board = [[str(i + j * 15) for i in range(15)] for j in range(15)]
         self.hypo_board = self.board
         self.n_moves = 0
@@ -19,13 +22,24 @@ class ScrabbleBoard:
         self.most_recent_move = Move(None, None, None)
 
     def get_words(self):
+        """
+        Extract the words from the scrabble_words.txt file.
+        Words should be each written on a line.
+        """
         with open("scrabble_words.txt") as f:
             self.all_words = f.read().split("\n")
 
     def conv_idx_to_coords(self, idx: int) -> tuple:
+        """
+        Turn index (single value) to coordinates (position on
+        2D board)
+        """
         return (idx // 15, idx % 15)
 
     def conv_coords_to_idx(self, coords: tuple) -> int:
+        """
+        coordinates can be converted to indices through
+        """
         return coords[0] * 15 + coords[1]
 
     def letter_in_pos(self, coords):
@@ -481,7 +495,8 @@ class ScrabbleBoard:
 
 
         :param self: the scrabble board
-        :param collection_of_words: a list of lists which look like [[words] [positions] [orientations]]
+        :param collection_of_words: a list of lists which look like
+        [[words] [positions] [orientations]]
         :type collection_of_words: list[list]
         """
         words_list = []
