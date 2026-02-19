@@ -14,7 +14,7 @@ Name this file "scrabble_words.txt" in the same directory as the repository.
 uv run game.py
 ```
 
-## Starting (Using pip):
+## Running with pip:
 
 ```
 source .venv/bin/activate
