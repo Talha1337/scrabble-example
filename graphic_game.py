@@ -1,8 +1,13 @@
 import pygame
+import json
+from board import Move, ScrabbleBoard
+
+pygame.font.init()
+TILEWIDTH = 600 / 15
 
 
 def coord_to_px(coords: tuple[int, int]) -> tuple[int, int]:
-    return tuple([int((600 / 15) * coord) for coord in coords])
+    return tuple([int((TILEWIDTH) * coord) for coord in coords])
 
 
 def populate_with_coords(surf: pygame.Surface) -> pygame.Surface:
@@ -15,7 +20,20 @@ def populate_with_coords(surf: pygame.Surface) -> pygame.Surface:
     return surf
 
 
-def add_letters(surf: pygame.Surface, pos: tuple[int, int]) -> pygame.Surface:
+def add_letter(
+    surf: pygame.Surface, pos: tuple[int, int], letter: str
+) -> pygame.Surface:
+
+    my_font = pygame.font.SysFont("Calibri", 36)
+    text_surface = my_font.render(letter, False, (0, 0, 255))
+    letter_pos = (pos[0] + TILEWIDTH / 5, pos[1])
+    surf.blit(text_surface, letter_pos)
+    return surf
+
+
+def add_letters_from_board(
+    board: ScrabbleBoard,
+) -> pygame.Surface:
     pass
 
 
@@ -37,6 +55,6 @@ while running:
     # Drawing image at position (0,0)
     game_display.blit(bg_image, (0, 0))
     game_display = populate_with_coords(game_display)
-    pygame.display.flip()
+    game_display = add_letter(game_display, coord_to_px((0, 0)), "A")
     pygame.display.update()
 pygame.quit()
