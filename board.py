@@ -1,6 +1,6 @@
 import copy
 from word import Word
-from test_game import Move
+from test_board import Move
 from responses import Mistake
 
 
@@ -374,7 +374,8 @@ class ScrabbleBoard:
             for element in line:
                 if element.isalpha():
                     # adds the purple colour to the letter.
-                    print(f"\033[1m \033[95m   {element}\033[0m".rjust(5), end="|")
+                    print(
+                        f"\033[1m \033[95m   {element}\033[0m".rjust(5), end="|")
                 else:
                     print(element.rjust(5), end="|")
             print("\n" + "-" * 100)
@@ -469,7 +470,8 @@ class ScrabbleBoard:
                         return False, Mistake(
                             f"Invalid word found ({validation_check[1]})"
                         )
-                    additional_words = self.turn_to_words(neighbouring_words_all_info)
+                    additional_words = self.turn_to_words(
+                        neighbouring_words_all_info)
                     #  Check for uniqueness. If not unique, add them to the set of words
                     all_additional_words.extend(additional_words)
 

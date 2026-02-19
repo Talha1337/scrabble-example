@@ -3,7 +3,7 @@ from responses import bcolors
 from input_checker import InputChecker
 from letters import Letters
 from player import Player
-from test_game import Move
+from test_board import Move
 import json
 import random
 import copy

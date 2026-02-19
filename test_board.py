@@ -18,9 +18,7 @@ class Move:
 
 
 #  Perhaps we would have a speed game where these moves are automatically inserted.
-
-
-if __name__ == "__main__":
+def test_board():
     from game import Scrabble
     from board import ScrabbleBoard
     from letters import Letters
@@ -53,6 +51,7 @@ if __name__ == "__main__":
         for file in os.listdir(testing_folder + "/" + folder):
             print(file)
             fpath = testing_folder + "/" + folder + "/" + file
+            print(fpath)
             if file.endswith(".csv"):
                 df = pd.read_csv(fpath)
             if file.endswith(".json"):
@@ -60,8 +59,8 @@ if __name__ == "__main__":
                     expected_board = json.load(f)
         moves = []
         for idx, row in df.iterrows():
-            move_conv = Move(row["starting_position"], row["hor"], row["word"])
+            move_conv = Move(row["starting_position"],
+                             row["hor"], row["word"])
             moves.append(move_conv)
         scrabble_game.play_auto(moves)
         assert scrabble_game.board.board == expected_board
-        print(f"Passed {folder}")
