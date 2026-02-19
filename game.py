@@ -75,8 +75,7 @@ class Scrabble:
 
     def start_names(self):
         while not self.checker.validate_n_players():
-            self.n_players = input(
-                "How many players do you want to play [2-4]? ")
+            self.n_players = input("How many players do you want to play [2-4]? ")
             self.checker.user_in = self.n_players
         self.n_players = int(self.n_players)
         for i in range(self.n_players):
@@ -127,8 +126,7 @@ class Scrabble:
         current_player_letters = self.curr_player.letters.copy()
         # Copy is necessary as otherwise will overwrite letters
         # for all players
-        self.curr_player.letters = self.letters.pick_up_letters(
-            current_player_letters)
+        self.curr_player.letters = self.letters.pick_up_letters(current_player_letters)
 
     def place_letters(self):
         for letter in self.board.req_letters:

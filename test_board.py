@@ -67,8 +67,7 @@ def test_board():
                     expected_board = json.load(f)
         moves = []
         for idx, row in df.iterrows():
-            move_conv = Move(row["starting_position"],
-                             row["hor"], row["word"])
+            move_conv = Move(row["starting_position"], row["hor"], row["word"])
             moves.append(move_conv)
         scrabble_game.play_auto(moves)
         assert scrabble_game.board.board == expected_board

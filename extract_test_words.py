@@ -1,6 +1,9 @@
 import os
 import pandas as pd
 
+#  TODO: This currently doesn't get additional connected words if playing a word.
+# e.g. snow at end of know doesn't give knows right now.
+
 
 def extract_test_words():
     testing_folder = "testing_games"
