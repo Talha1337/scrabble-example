@@ -168,10 +168,11 @@ class Scrabble:
 
     def print_winner(self):
         best_player_score = 0
-        best_player = self.players[-1]  # The last player wins in a tie (I've decided)
+        best_player = self.players[-1]  # The last player will win in a tie.
         for player in self.players:
             if player.score > best_player_score:
                 best_player = player
+                best_player_score = player.score
 
         print(f"{best_player.name} wins!")
 
