@@ -24,7 +24,7 @@ python3 game.py
 
 # Testing
 
-If you have changed features you may want to run `test_game.py`, which will run games with known moves and known outcomes, which can be found in the `testing_games` folder. Within each of these folders, a JSON file and a CSV file of game moves exist. Game moves are played out and the final board is compared with the correct JSON file. This should run without errors, meaning tests have passed.
+If you have changed features you may want to run `pytest test_board.py`, which will run games with known moves and known outcomes, which can be found in the `testing_games` folder. Within each of these folders, a JSON file and a CSV file of game moves exist. Game moves are played out and the final board is compared with the correct JSON file. This should run without errors, meaning tests have passed.
 
 
 
