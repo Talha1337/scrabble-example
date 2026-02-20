@@ -137,6 +137,7 @@ class Scrabble:
         print(f"{self.curr_player.name}'s turn")
         print(self.curr_player)
         self.board.word_score = 0
+
         move = self.take_input()
         #  Player can either play a word here or swap tiles
         if move == "swap":
