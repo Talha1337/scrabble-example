@@ -60,60 +60,38 @@ class ScrabbleBoard:
     def letter_in_pos(self, coords):
         return self.hypo_board[coords[0]][coords[1]]
 
-    def down(self, coords):
-        if self.down_edge(coords):
-            return "999"
-        return self.hypo_board[coords[0] + 1][coords[1]]
+    def down(self, coords: tuple[int, int]) -> str | None:
+        new_coords = (coords[0] + 1, coords[1])
+        if self.valid_coords(new_coords):
+            return self.hypo_board[new_coords[0]][new_coords[1]]
+        return None
 
-    def up(self, coords):
-        if self.up_edge(coords):
-            return "999"
-        return self.hypo_board[coords[0] - 1][coords[1]]
+    def up(self, coords: tuple[int, int]) -> str | None:
+        new_coords = (coords[0] - 1, coords[1])
+        if self.valid_coords(new_coords):
+            return self.hypo_board[new_coords[0]][new_coords[1]]
+        return None
 
-    def left(self, coords):
-        if self.left_edge(coords):
-            return "999"
-        return self.hypo_board[coords[0]][coords[1] - 1]
+    def left(self, coords: tuple[int, int]) -> str | None:
+        new_coords = (coords[0], coords[1] - 1)
+        if self.valid_coords(new_coords):
+            return self.hypo_board[new_coords[0]][new_coords[1]]
+        return None
 
-    def right(self, coords):
-        if self.right_edge(coords):
-            return "999"
-        return self.hypo_board[coords[0]][coords[1] + 1]
+    def right(self, coords: tuple[int, int]) -> str | None:
+        new_coords = (coords[0], coords[1] + 1)
+        if self.valid_coords(new_coords):
+            return self.hypo_board[new_coords[0]][new_coords[1]]
+        return None
 
-    #  Edges checked so that no
-    # accidental going outside list range.
-    def right_edge(self, coords):
-        if coords[1] == 14:
-            return True
-        return False
-
-    def left_edge(self, coords):
-        if coords[1] == 0:
-            return True
-        return False
-
-    def up_edge(self, coords):
-        if coords[0] == 0:
-            return True
-        return False
-
-    def down_edge(self, coords):
-        if coords[0] == 14:
-            return True
-        return False
-
-    # def neighbouring_valid_coords(self, coords) -> list:
-    #     coord_values = []
-    #     row, col = coords[0],  coords[1]
-    #     for i in [-1, 1]:
-    #         for j in [-1, 1]:
-    #             proposed_row = row + i
-    #             proposed_col = col + j
-    #             if proposed_col == -1 or proposed_row == 15:
-    #                 continue
-    #             if proposed_row == -1 or proposed_row == 15:
-    #                 continue
-    #             coord_values.append()
+    def valid_coords(self, coords: tuple[int, int]) -> bool:
+        # Check vertical bounds
+        if coords[0] not in range(len(self.board)):
+            return False
+        # Check horizontal bounds
+        if coords[1] not in range(len(self.board[0])):
+            return False
+        return True
 
     def find_neighbours(
         self, coords: tuple, start: tuple, hor: bool, end: tuple
@@ -404,24 +382,32 @@ class ScrabbleBoard:
         coords_orig = list(coords).copy()
         coords = list(coords)
         word_coords = []
-        if self.left(coords).isalpha() or self.right(coords).isalpha():
-            while self.left(coords).isalpha():
+        left_tile = self.left(coords)
+        right_tile = self.right(coords)
+        if (left_tile is not None and left_tile.isalpha()) or (
+            right_tile is not None and right_tile.isalpha()
+        ):
+            while self.left(coords) is not None and self.left(coords).isalpha():
                 coords[1] = coords[1] - 1
             word_coords.append(coords.copy())
             words[0] += self.letter_in_pos(coords)
-            while self.right(coords).isalpha():
+            while self.right(coords) is not None and self.right(coords).isalpha():
                 words[0] += self.right(coords)
                 coords[1] = coords[1] + 1
             pass
 
         coords = coords_orig
-        if self.up(coords).isalpha() or self.down(coords).isalpha():
+        up_tile = self.up(coords)
+        down_tile = self.down(coords)
+        if (up_tile is not None and up_tile.isalpha()) or (
+            down_tile is not None and down_tile.isalpha()
+        ):
             # Word is vertical
-            while self.up(coords).isalpha():
+            while self.up(coords) is not None and self.up(coords).isalpha():
                 coords[0] = coords[0] - 1
             word_coords.append(coords.copy())
             words[1] += self.letter_in_pos(coords)
-            while self.down(coords).isalpha():
+            while self.down(coords) is not None and self.down(coords).isalpha():
                 words[1] += self.down(coords)
                 coords[0] = coords[0] + 1
         return [words, word_coords, [True, False]]
