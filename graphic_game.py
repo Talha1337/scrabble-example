@@ -34,7 +34,6 @@ class ScrabbleSurface(pygame.Surface):
         pygame.draw.rect(self, (255, 255, 255), (pos[0], pos[1], 40, 40))
 
     def add_letter(self, pos: tuple[int, int], letter: str):
-
         my_font = pygame.font.SysFont("Calibri", 36, bold=True)
         text_surface = my_font.render(letter, False, (0, 0, 0))
         letter_pos = (pos[0] + TILEWIDTH / 5, pos[1])
