@@ -60,328 +60,71 @@ class ScrabbleBoard:
     def letter_in_pos(self, coords):
         return self.hypo_board[coords[0]][coords[1]]
 
-    def down(self, coords):
-        if self.down_edge(coords):
-            return "999"
-        return self.hypo_board[coords[0] + 1][coords[1]]
+    def down(self, coords: tuple[int, int]) -> str | None:
+        new_coords = (coords[0] + 1, coords[1])
+        if self.valid_coords(new_coords):
+            return self.hypo_board[new_coords[0]][new_coords[1]]
+        return None
 
-    def up(self, coords):
-        if self.up_edge(coords):
-            return "999"
-        return self.hypo_board[coords[0] - 1][coords[1]]
+    def up(self, coords: tuple[int, int]) -> str | None:
+        new_coords = (coords[0] - 1, coords[1])
+        if self.valid_coords(new_coords):
+            return self.hypo_board[new_coords[0]][new_coords[1]]
+        return None
 
-    def left(self, coords):
-        if self.left_edge(coords):
-            return "999"
-        return self.hypo_board[coords[0]][coords[1] - 1]
+    def left(self, coords: tuple[int, int]) -> str | None:
+        new_coords = (coords[0], coords[1] - 1)
+        if self.valid_coords(new_coords):
+            return self.hypo_board[new_coords[0]][new_coords[1]]
+        return None
 
-    def right(self, coords):
-        if self.right_edge(coords):
-            return "999"
-        return self.hypo_board[coords[0]][coords[1] + 1]
+    def right(self, coords: tuple[int, int]) -> str | None:
+        new_coords = (coords[0], coords[1] + 1)
+        if self.valid_coords(new_coords):
+            return self.hypo_board[new_coords[0]][new_coords[1]]
+        return None
 
-    #  Edges checked so that no
-    # accidental going outside list range.
-    def right_edge(self, coords):
-        if coords[1] == 14:
-            return True
-        return False
-
-    def left_edge(self, coords):
-        if coords[1] == 0:
-            return True
-        return False
-
-    def up_edge(self, coords):
-        if coords[0] == 0:
-            return True
-        return False
-
-    def down_edge(self, coords):
-        if coords[0] == 14:
-            return True
-        return False
-
-    # def neighbouring_valid_coords(self, coords) -> list:
-    #     coord_values = []
-    #     row, col = coords[0],  coords[1]
-    #     for i in [-1, 1]:
-    #         for j in [-1, 1]:
-    #             proposed_row = row + i
-    #             proposed_col = col + j
-    #             if proposed_col == -1 or proposed_row == 15:
-    #                 continue
-    #             if proposed_row == -1 or proposed_row == 15:
-    #                 continue
-    #             coord_values.append()
+    def valid_coords(self, coords: tuple[int, int]) -> bool:
+        # Check vertical bounds
+        if coords[0] not in range(len(self.board)):
+            return False
+        # Check horizontal bounds
+        if coords[1] not in range(len(self.board[0])):
+            return False
+        return True
 
     def find_neighbours(
-        self, coords: tuple, start: tuple, hor: bool, end: tuple
+        self, coords: tuple[int, int], start: tuple[int, int], word: str, hor: bool
     ) -> list:
-        if max(coords) < 14 and min(coords) > 0:
-            if coords == start:
-                # 3 possible touch points at the start and at the end
-                if hor:
-                    return [self.down(coords), self.up(coords), self.left(coords)]
-                else:
-                    return [self.right(coords), self.left(coords), self.up(coords)]
-            elif coords == end:
-                # 3 possible touch points at the start and at the end
-                if hor:
-                    return [self.down(coords), self.up(coords), self.right(coords)]
-                else:
-                    return [self.down(coords), self.left(coords), self.right(coords)]
-            else:
-                if hor:
-                    return [
-                        self.down(coords),
-                        self.up(coords),
-                    ]
-                else:
-                    return [self.right(coords), self.left(coords)]
-        elif coords[0] == 0 and coords[1] != 0:
-            # The tile is placed in the top row so coords[0]-1 would no longer be possible.
-            if coords == start:
-                # 3 possible touch points at the start and at the end
-                if hor:
-                    return [
-                        self.down(coords),
-                        self.left(coords),
-                    ]
-                else:
-                    return [
-                        self.right(coords),
-                        self.left(coords),
-                    ]
-            elif coords == end:
-                # 3 possible touch points at the start and at the end
-                if hor:
-                    return [self.down(coords), self.right(coords)]
-                else:
-                    return [
-                        self.right(coords),
-                        self.left(coords),
-                        self.down(coords),
-                    ]
-            else:
-                if hor:
-                    return [self.down(coords)]
-                else:
-                    return [
-                        self.right(coords),
-                        self.left(coords),
-                    ]
-        elif coords[0] != 0 and coords[1] == 0:
-            # The tile is placed in the left most edge,
-            # so coords[1] -1 would now be impossible.
-            if coords == start:
-                if hor:
-                    return [
-                        self.down(coords),
-                        self.up(coords),
-                    ]
-                else:
-                    return [self.right(coords), self.up(coords)]
-            elif coords == end:
-                # 3 possible touch points at the start and at the end
-                if hor:
-                    return [
-                        self.down(coords),
-                        self.up(coords),
-                        self.right(coords),
-                    ]
-                else:
-                    return [
-                        self.right(coords),
-                        self.down(coords),
-                    ]
-            else:
-                if hor:
-                    return [
-                        self.down(coords),
-                        self.up(coords),
-                    ]
-                else:
-                    return [
-                        self.right(coords),
-                    ]
-        elif coords[0] == 14 and coords[1] != 14:
-            # On the bottom row of the board, but not in a corner.
-            # Now coords[0]+1 would be impossible.
-            if coords == start:
-                # 3 possible touch points at the start and at the end
-                if hor:
-                    return [
-                        self.up(coords),
-                        self.left(coords),
-                    ]
-                else:
-                    return [self.right(coords), self.left(coords), self.up(coords)]
-            elif coords == end:
-                # 3 possible touch points at the start and at the end
-                if hor:
-                    return [self.up(coords), self.right(coords)]
-                else:
-                    return [
-                        self.right(coords),
-                        self.left(coords),
-                    ]
-            else:
-                if hor:
-                    return [
-                        self.up(coords),
-                    ]
-                else:
-                    return [
-                        self.right(coords),
-                        self.left(coords),
-                    ]
-        elif coords[0] != 14 and coords[1] == 14:
-            # Now on the right edge, this means
-            # coords[1]+1 will be impossible
-            if coords == start:
-                # 3 possible touch points at the start and at the end
-                if hor:
-                    return [
-                        self.down(coords),
-                        self.up(coords),
-                        self.left(coords),
-                    ]
-                else:
-                    return [self.left(coords), self.up(coords)]
-            elif coords == end:
-                # 3 possible touch points at the start and at the end
-                if hor:
-                    return [
-                        self.down(coords),
-                        self.up(coords),
-                    ]
-                else:
-                    return [
-                        self.left(coords),
-                        self.down(coords),
-                    ]
-            else:
-                if hor:
-                    return [
-                        self.down(coords),
-                        self.up(coords),
-                    ]
-                else:
-                    return [
-                        self.left(coords),
-                    ]
-        # Can consider corners now
-        elif coords[0] == 14 and coords[1] == 0:
-            # Now coords[0]+1, coords[1]-1 impossible
-            if coords == start:
-                # 3 possible touch points at the start and at the end
-                if hor:
-                    return [
-                        self.up(coords),
-                    ]
-                else:
-                    return [self.right(coords), self.up(coords)]
-            elif coords == end:
-                # 3 possible touch points at the start and at the end
-                if hor:
-                    return [self.up(coords), self.right(coords)]
-                else:
-                    return [
-                        self.right(coords),
-                    ]
-            else:
-                if hor:
-                    return [
-                        self.up(coords),
-                    ]
-                else:
-                    return [
-                        self.right(coords),
-                    ]
-        elif coords[0] == 14 and coords[1] == 14:
-            if coords == start:
-                # 3 possible touch points at the start and at the end
-                if hor:
-                    return [
-                        self.up(coords),
-                        self.left(coords),
-                    ]
-                else:
-                    return [self.left(coords), self.up(coords)]
-            elif coords == end:
-                # 3 possible touch points at the start and at the end
-                if hor:
-                    return [
-                        self.up(coords),
-                    ]
-                else:
-                    return [
-                        self.left(coords),
-                    ]
-            else:
-                if hor:
-                    return [
-                        self.up(coords),
-                    ]
-                else:
-                    return [
-                        self.left(coords),
-                    ]
-        elif coords[0] == 0 and coords[1] == 14:
-            if coords == start:
-                # 3 possible touch points at the start and at the end
-                if hor:
-                    return [
-                        self.down(coords),
-                        self.left(coords),
-                    ]
-                else:
-                    return [
-                        self.left(coords),
-                    ]
-            elif coords == end:
-                # 3 possible touch points at the start and at the end
-                if hor:
-                    return [self.down(coords)]
-                else:
-                    return [
-                        self.left(coords),
-                        self.down(coords),
-                    ]
-            else:
-                if hor:
-                    return [self.down(coords)]
-                else:
-                    return [
-                        self.left(coords),
-                    ]
+        # Compute end coordinates from start coordinates and word length
+        if hor:
+            end = (start[0], start[1] + len(word) - 1)
         else:
-            # This is 0,0, top right corner. no -1 anywhere.
-            if coords == start:
-                # 3 possible touch points at the start and at the end
-                if hor:
-                    return [self.down(coords)]
-                else:
-                    return [
-                        self.right(coords),
-                    ]
-            elif coords == end:
-                # 3 possible touch points at the start and at the end
-                if hor:
-                    return [self.down(coords), self.right(coords)]
-                else:
-                    return [
-                        self.right(coords),
-                        self.down(coords),
-                    ]
+            end = (start[0] + len(word) - 1, start[1])
+
+        # Perpendicular direction (always check these)
+        if hor:
+            neighbours = [self.up(coords), self.down(coords)]
+        else:
+            neighbours = [self.left(coords), self.right(coords)]
+
+        # At start: also check the "before" direction
+        if coords == start:
+            if hor:
+                neighbours.append(self.left(coords))
             else:
-                if hor:
-                    return [self.down(coords)]
-                else:
-                    return [
-                        self.right(coords),
-                    ]
+                neighbours.append(self.up(coords))
+
+        # At the end: also check the "after" direction
+        if coords == end:
+            if hor:
+                neighbours.append(self.right(coords))
+            else:
+                neighbours.append(self.down(coords))
+
+        # Remember: `right`, `left`, `down` and `up` return None if those directions are invalid.
+        # So we need to filter out Nones from the result
+        return [n for n in neighbours if n is not None]
 
     def display_board(self):
         print("\n" * 4)
@@ -404,24 +147,32 @@ class ScrabbleBoard:
         coords_orig = list(coords).copy()
         coords = list(coords)
         word_coords = []
-        if self.left(coords).isalpha() or self.right(coords).isalpha():
-            while self.left(coords).isalpha():
+        left_tile = self.left(coords)
+        right_tile = self.right(coords)
+        if (left_tile is not None and left_tile.isalpha()) or (
+            right_tile is not None and right_tile.isalpha()
+        ):
+            while self.left(coords) is not None and self.left(coords).isalpha():
                 coords[1] = coords[1] - 1
             word_coords.append(coords.copy())
             words[0] += self.letter_in_pos(coords)
-            while self.right(coords).isalpha():
+            while self.right(coords) is not None and self.right(coords).isalpha():
                 words[0] += self.right(coords)
                 coords[1] = coords[1] + 1
             pass
 
         coords = coords_orig
-        if self.up(coords).isalpha() or self.down(coords).isalpha():
+        up_tile = self.up(coords)
+        down_tile = self.down(coords)
+        if (up_tile is not None and up_tile.isalpha()) or (
+            down_tile is not None and down_tile.isalpha()
+        ):
             # Word is vertical
-            while self.up(coords).isalpha():
+            while self.up(coords) is not None and self.up(coords).isalpha():
                 coords[0] = coords[0] - 1
             word_coords.append(coords.copy())
             words[1] += self.letter_in_pos(coords)
-            while self.down(coords).isalpha():
+            while self.down(coords) is not None and self.down(coords).isalpha():
                 words[1] += self.down(coords)
                 coords[0] = coords[0] + 1
         return [words, word_coords, [True, False]]
@@ -469,7 +220,7 @@ class ScrabbleBoard:
                 letter_row = corresp_row + i
                 letter_col = corresp_column
             for neighbour in self.find_neighbours(
-                (letter_row, letter_col), start_coords, hor, end_coords
+                (letter_row, letter_col), start_coords, word, hor
             ):
                 if neighbour.isalpha():
                     neighbouring_words_all_info = self.gain_word_from_letter(
