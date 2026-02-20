@@ -49,6 +49,10 @@ class ScrabbleGraphicGame:
         self.add_tile(pos)
         self.add_letter(pos, letter)
 
+    def draw_letters(self):
+        for lettersurf in self.available_letters:
+            pygame.draw.rect(self.surf, (255, 255, 255), lettersurf)
+
     def get_letters_at_bottom(self, letters: str | list):
         for i, letter in enumerate(self.available_letters):
             letter_rect = pygame.Rect(50 + i * 75, 650, 40, 40)
@@ -65,6 +69,7 @@ while running:
     game_display.add_bg()
     game_display.populate_with_coords()
     game_display.add_tile_to_board(coord_to_px((0, 0)))
+    game_display.draw_letters()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -74,13 +79,17 @@ while running:
                 for i, letter in enumerate(game_display.available_letters):
                     if letter.collidepoint(event.pos):
                         game_display.active_tile = i
+                        print(f"active tile is {i}")
         if event.type == pygame.MOUSEBUTTONUP:
             print("unclick")
             game_display.active_tile = None
         if event.type == pygame.MOUSEMOTION:
             if game_display.active_tile is not None:
                 print(event.rel)
-                game_display.available_letters[i].move_ip(event.rel)
+                print(f"moving {i}")
+                game_display.available_letters[game_display.active_tile].move_ip(
+                    event.rel
+                )
 
     # Drawing image at position (0,0)
     pygame.display.flip()

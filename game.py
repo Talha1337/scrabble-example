@@ -96,12 +96,12 @@ class Scrabble:
             note.display_response()
             self.slot = input(
                 Instruction(
-                    "Please insert your starting point (0-224) or 'swap' to swap tiles: "
+                    "Please insert your starting point (0-224) or 'swap' to swap tiles or 'pass' to pass: "
                 ).full_msg
             ).strip()
             self.checker.user_in = self.slot
             slot_valid = self.checker.validate_input_slot()
-            if self.slot == "swap":
+            if self.slot in ["swap", "pass"]:
                 return self.slot
 
         self.slot = int(self.slot)
@@ -140,6 +140,12 @@ class Scrabble:
 
         move = self.take_input()
         #  Player can either play a word here or swap tiles
+        if move == "pass":
+            print("passing on this move")
+            self.curr_player.passed = True
+            return True
+        else:
+            self.curr_player.passed = False
         if move == "swap":
             # Swap letters
             self.letters.replace_all_letters(self.curr_player.letters)
@@ -160,42 +166,70 @@ class Scrabble:
         with open(self.save_path + "final_board.json", "w") as f:
             json.dump(self.board.board, f)
 
+    def print_winner(self):
+        best_player_score = 0
+        best_player = self.players[-1]  # The last player wins in a tie (I've decided)
+        for player in self.players:
+            if player.score > best_player_score:
+                best_player = player
+
+        print(f"{best_player.name} wins!")
+
     def play(self):
         self.start_names()
         i = 0
-        while i < 15:
+        while True:
             self.curr_player = self.players[i % self.n_players]
             self.take_letters()
             self.board.display_board()
-            if self.curr_player.letters:
-                while not self.take_turn():
-                    if i == 0:
-                        print(
-                            Note(
-                                "REMEMBER: First word has to go through the centre (112)"
-                            ).full_msg
-                        )
-
-                self.curr_player.score += self.board.word_score
-                print(
-                    f"{self.curr_player.name} is now on {self.curr_player.score} points"
-                )
-                if self.log:
-                    move_info = {
-                        "word": [self.board.most_recent_move.word],
-                        "hor": [self.board.most_recent_move.orientation],
-                        "starting_position": [self.board.most_recent_move.pos],
-                    }
-                    mode = "w" if self.header else "a"
-                    pd.DataFrame.from_dict(move_info).to_csv(
-                        self.save_path + "moves.csv",
-                        mode=mode,
-                        header=self.header,
-                        index=False,
+            while not self.take_turn():
+                if i == 0:
+                    print(
+                        Note(
+                            "REMEMBER: First word has to go through the centre (112)"
+                        ).full_msg
                     )
-                    self.header = False
+
+            self.curr_player.score += self.board.word_score
+            print(f"{self.curr_player.name} is now on {self.curr_player.score} points")
+            if self.log:
+                move_info = {
+                    "word": [self.board.most_recent_move.word],
+                    "hor": [self.board.most_recent_move.orientation],
+                    "starting_position": [self.board.most_recent_move.pos],
+                }
+                mode = "w" if self.header else "a"
+                pd.DataFrame.from_dict(move_info).to_csv(
+                    self.save_path + "moves.csv",
+                    mode=mode,
+                    header=self.header,
+                    index=False,
+                )
+                self.header = False
+            if self.check_end():
+                self.print_winner()
+                return True
+
             i += 1
         # Game has ended at this point
+
+    def check_end(self):
+        # Ends could happen if
+        # 1) all players passed
+        n_players_passed = 0
+        for player in self.players:
+            if player.passed:
+                n_players_passed += 1
+        if n_players_passed == self.n_players:
+            return True
+        # 2) everyone has run out of letters
+        empty_players = 0
+        for player in self.players:
+            if player.letters == []:
+                empty_players += 1
+        if empty_players == self.n_players:
+            return True
+        # 3)
 
     def play_auto(self, moves: list[Move]):
         print("starting game")
@@ -222,8 +256,6 @@ class Scrabble:
 if __name__ == "__main__":
     board = ScrabbleBoard()
     input_checker = InputChecker()
-    letters = Letters()
-
-    if __name__ == "__main__":
-        scrabble_example = Scrabble(board, input_checker, letters)
-        scrabble_example.play()
+    letters = Letters(tile_collection={"A": 2, "B": 2, "E": 1, "O": 1, "I": 1, "L": 1})
+    scrabble_example = Scrabble(board, input_checker, letters)
+    scrabble_example.play()

@@ -3,8 +3,8 @@ class InputChecker:
         self.user_in = initial_in
 
     def validate_input_slot(self):
-        if self.user_in == "swap":
-            # Then see the swapping feature
+        if self.user_in == "swap" or self.user_in == "pass":
+            # Then see the swapping feature or passing feature.
             return True
         try:
             # number should be able to turn into int

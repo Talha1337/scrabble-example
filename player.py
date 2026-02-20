@@ -2,6 +2,7 @@ class Player:
     def __init__(self, name: str = "", score: int = 0, letters: list | None = None):
         self.name = name
         self.score = score
+        self.passed = False
         if letters is None:
             self.letters = []
 
